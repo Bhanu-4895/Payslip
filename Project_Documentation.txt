@@ -1,0 +1,86 @@
+# NR Softech Payslip Generating System - Project Documentation
+
+## 1. Project Overview
+The NR Softech Payslip Generating System is a full-stack web application designed to manage employee records, perform payroll calculations, and generate pixel-perfect, printable, and downloadable payslips. The system enforces strict input validations, automates critical payroll calculations (like HRA, PF, and YTD logic), and adheres to a standardized corporate UI layout.
+
+## 2. Technology Stack
+- **Frontend:** React.js (Vite), React Router DOM, Material UI (MUI) for styling and components.
+- **Backend:** Node.js, Express.js.
+- **Database:** PostgreSQL.
+
+## 3. Database Schema
+The database consists of two primary tables linked via a foreign key relationship:
+
+### Employee Table (`employee`)
+Stores employee master data.
+- Fields: `id` (Primary Key), `name`, `pers_no` (Unique), `pan`, `uan`, `pf_no`, `designation`, `department`, `doj` (Date of Joining), `bank_name`, `bank_account`, `created_at`.
+
+### Payroll Table (`payroll`)
+Stores monthly salary data for each employee.
+- Fields: `id` (Primary Key), `employee_id` (Foreign Key), `month`, `year`, `paid_days`, `basic_pay`, `hra` (Automated 50% logic), `transport`, `meal`, `total_earnings`, `income_tax`, `total_tax`, `pf_deduction` (Automated 12% logic), `prof_tax`, `med_insurance`, `sodexo`, `deductions_total`, `net_pay`, `created_at`.
+
+## 4. Frontend Application Structure & Navigation
+The frontend application uses `react-router-dom` for navigation, with a persistent Top Navigation Bar (`AppBar`) that allows switching between the main screens.
+
+### 4.1. Navigation Bar (Top Menu)
+Provides persistent navigation across the application:
+- **Logo and Company Name:** "NR SOFTECH (I) PVT.LTD. - Payslip Generating System".
+- **Links:**
+  - `Search & Generate` (Routes to `/`)
+  - `Employee Directory` (Routes to `/employees`)
+  - `Add Employee` (Routes to `/add`)
+
+### 4.2. Screens / Pages
+
+#### 1. Search & Generate Payslip (Route: `/`)
+- **Component:** `SearchPayslip.jsx`
+- **Purpose:** Allows HR/Admin to search for a specific employee by ID, Name, or Month/Year and generate their payslip.
+- **Functionality:** 
+  - Search input field that queries the backend.
+  - Generates a highly formatted, pixel-perfect Payslip UI component.
+  - Supports "Print" and "Download as PDF" capabilities for the generated payslip.
+
+#### 2. Add Employee (Route: `/add`)
+- **Component:** `AddEmployee.jsx`
+- **Purpose:** Data entry form for registering a new employee and entering their salary details.
+- **Functionality:**
+  - Divided into two sections: Employee Information and Payroll Details.
+  - Enforces strict input validations (e.g., PAN format, UAN format, specific corporate standard formats).
+  - Implements automated calculations on the fly: 
+    - HRA calculation (50% of Basic).
+    - PF calculation (12% of Basic).
+    - Automatic summation of Total Earnings and Total Deductions.
+    - Calculation of Net Pay.
+    - YTD (Year-To-Date) logic multipliers (12x).
+  - Submits data to backend to insert into both `employee` and `payroll` tables.
+
+#### 3. Employee Directory (Route: `/employees`)
+- **Component:** `ViewEmployees.jsx`
+- **Purpose:** Displays a tabular list of all employees in the system.
+- **Functionality:**
+  - Presents a dynamic data grid / table (`DataTable.jsx`) using Material UI.
+  - Provides action buttons for each row: "Edit" and "Delete".
+
+#### 4. Edit Employee (Route: `/edit/:id`)
+- **Component:** `EditEmployee.jsx`
+- **Purpose:** Allows modification of an existing employee's data or payroll details.
+- **Functionality:**
+  - Pre-fills the form by fetching the specific employee's current data based on the route ID.
+  - Includes the same automated calculations and validations as the Add Employee screen.
+  - Submits updated data to the backend to update existing records.
+
+## 5. Backend API Endpoints (Express.js)
+The backend exposes RESTful APIs (routed in `backend/routes/index.js` and controlled by `backend/controllers/payrollController.js`):
+- `POST /employee` - Create a new employee and their associated payroll record.
+- `GET /employee/search` - Search for an employee and their payslip records.
+- `GET /payslip/:id` - Fetch the full formatted payslip details for a specific record.
+- `GET /employees` - Retrieve a list of all employees for the directory.
+- `GET /employees/:id` - Retrieve a single employee's details (for editing).
+- `PUT /employees/:id` - Update an employee's details and payroll data.
+- `DELETE /employees/:id` - Remove an employee from the system.
+
+## 6. Key Features & Business Logic
+- **Automated Payroll Computations:** Minimizes manual entry errors by automatically computing HRA, PF, Net Pay, and YTD projections on the frontend before submission.
+- **Corporate Blue Theme:** The UI adheres to a standardized deep corporate blue, grey, and white color palette (`#1a365d` primary), creating a premium, professional aesthetic.
+- **Print-Ready Payslips:** The `Payslip.jsx` component is styled with CSS to specifically hide navigation menus (`.hide-on-print`) when the browser print dialog is invoked, ensuring only the exact payslip dimensions and layout are printed or saved to PDF.
+- **Input Sanitization and Validation:** All form fields are controlled and validated to match specific corporate format requirements before backend submission.
