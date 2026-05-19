@@ -9,5 +9,5 @@ app.use(express.json());
 // API Routes
 app.use('/', routes);
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));

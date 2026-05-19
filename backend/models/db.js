@@ -1,17 +1,34 @@
-const sqlite3 = require('sqlite3').verbose();
+require('dotenv').config();
 const path = require('path');
 
-const dbPath = path.resolve(__dirname, 'payroll.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error("SQLite connection failed:", err.message);
-    } else {
-        console.log("Connected to SQLite successfully");
-    }
-});
+let queryFn;
 
-module.exports = {
-    query: (text, params = []) => {
+if (process.env.DATABASE_URL) {
+    console.log("Database configuration detected: PostgreSQL");
+    const { Pool } = require('pg');
+    const pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.DATABASE_URL.includes('localhost') || process.env.DATABASE_URL.includes('127.0.0.1') ? false : {
+            rejectUnauthorized: false
+        }
+    });
+
+    queryFn = (text, params = []) => {
+        return pool.query(text, params);
+    };
+} else {
+    console.log("Database configuration detected: SQLite (Local Fallback)");
+    const sqlite3 = require('sqlite3').verbose();
+    const dbPath = path.resolve(__dirname, 'payroll.db');
+    const db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+            console.error("SQLite connection failed:", err.message);
+        } else {
+            console.log("Connected to SQLite successfully");
+        }
+    });
+
+    queryFn = (text, params = []) => {
         return new Promise((resolve, reject) => {
             let sqliteText = text.replace(/\$\d+/g, '?');
             sqliteText = sqliteText.replace(/ILIKE/g, 'LIKE');
@@ -39,5 +56,9 @@ module.exports = {
                 });
             }
         });
-    }
+    };
+}
+
+module.exports = {
+    query: queryFn
 };

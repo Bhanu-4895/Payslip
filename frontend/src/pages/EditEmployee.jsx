@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Paper, Grid, TextField, Typography, Button, Divider, MenuItem } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 const BANKS = ['SBI', 'ICICI', 'HDFC', 'AXIS', 'KOTAK'];
 
@@ -32,7 +33,7 @@ export default function EditEmployee() {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/employees/${id}`);
+        const res = await axios.get(`${API_URL}/employees/${id}`);
         const data = res.data;
         let formattedDoj = '';
         if (data.doj) {
@@ -82,13 +83,32 @@ export default function EditEmployee() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    let val = name === 'pan' ? value.toUpperCase() : value;
+    let val = typeof value === 'string' ? value.toUpperCase() : value;
+
+    if (name === 'pan') {
+      val = val.replace(/[^A-Z0-9]/g, '');
+      val = val.slice(0, 10);
+    }
+
     let newForm = { ...formData, [name]: val };
+
+    if (name === 'meal') {
+      newForm.sodexo = val;
+    }
+
+    if (name === 'payPeriodFrom' && val) {
+      const fromDate = new Date(val);
+      if (!isNaN(fromDate)) {
+        const lastDay = new Date(fromDate.getFullYear(), fromDate.getMonth() + 1, 0);
+        const lastDayStr = `${lastDay.getFullYear()}-${String(lastDay.getMonth()+1).padStart(2,'0')}-${String(lastDay.getDate()).padStart(2,'0')}`;
+        newForm.payPeriodTo = lastDayStr;
+      }
+    }
 
     let paidDaysChanged = false;
     if ((name === 'payPeriodFrom' || name === 'payPeriodTo')) {
-      const from = name === 'payPeriodFrom' ? value : newForm.payPeriodFrom;
-      const to = name === 'payPeriodTo' ? value : newForm.payPeriodTo;
+      const from = name === 'payPeriodFrom' ? val : newForm.payPeriodFrom;
+      const to = name === 'payPeriodTo' ? val : newForm.payPeriodTo;
       if (from && to) {
         const fromDate = new Date(from);
         const toDate = new Date(to);
@@ -106,7 +126,7 @@ export default function EditEmployee() {
     }
 
     if (name === 'grossBasicPay' || paidDaysChanged) {
-      const gbp = parseFloat(name === 'grossBasicPay' ? value : newForm.grossBasicPay) || 0;
+      const gbp = parseFloat(name === 'grossBasicPay' ? val : newForm.grossBasicPay) || 0;
       const pd = parseFloat(newForm.paidDays) || 0;
       const earnedBp = (gbp * pd / 30).toFixed(2);
       newForm.basicPay = earnedBp;
@@ -118,8 +138,8 @@ export default function EditEmployee() {
     if (['basicPay', 'hra', 'transport', 'meal'].includes(name) || name === 'grossBasicPay' || paidDaysChanged) {
       const bp = parseFloat(newForm.basicPay) || 0;
       const hra = parseFloat(newForm.hra) || 0;
-      const tp = parseFloat(name === 'transport' ? value : newForm.transport) || 0;
-      const ml = parseFloat(name === 'meal' ? value : newForm.meal) || 0;
+      const tp = parseFloat(name === 'transport' ? val : newForm.transport) || 0;
+      const ml = parseFloat(name === 'meal' ? val : newForm.meal) || 0;
       const totalEarnings = bp + hra + tp + ml;
       newForm.incomeTax = calculateTax(totalEarnings).toFixed(2);
     }
@@ -150,7 +170,7 @@ export default function EditEmployee() {
     try {
       const payload = { ...formData };
 
-      await axios.put(`http://localhost:3001/employees/${id}`, payload);
+      await axios.put(`${API_URL}/employees/${id}`, payload);
       setStatus('Successfully updated employee and payroll details!');
       setTimeout(() => navigate('/employees'), 1500);
     } catch (error) {

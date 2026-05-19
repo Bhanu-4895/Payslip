@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Box, TextField, Button, Typography, Paper, List, ListItem, ListItemText, ListItemButton } from '@mui/material';
 import Payslip from '../components/Payslip';
+import { API_URL } from '../config';
 
 export default function SearchPayslip() {
   const [query, setQuery] = useState('');
@@ -24,7 +25,7 @@ export default function SearchPayslip() {
     setPayslipData(null);
     
     try {
-      const response = await axios.get(`http://localhost:3001/employee/search?q=${query}`);
+      const response = await axios.get(`${API_URL}/employee/search?q=${query}`);
       setResults(response.data);
       setSearchStatus(response.data.length > 0 ? '' : 'No matching records found.');
     } catch (error) {
@@ -36,7 +37,7 @@ export default function SearchPayslip() {
   const handleGenerate = async (payrollId) => {
     setSelectedPayrollId(payrollId);
     try {
-      const response = await axios.get(`http://localhost:3001/payslip/${payrollId}`);
+      const response = await axios.get(`${API_URL}/payslip/${payrollId}`);
       setPayslipData(response.data);
     } catch (error) {
       console.error(error);
@@ -53,7 +54,7 @@ export default function SearchPayslip() {
             fullWidth 
             label="Search by Pers No, PAN, or Name" 
             value={query} 
-            onChange={(e) => setQuery(e.target.value)} 
+            onChange={(e) => setQuery(e.target.value.toUpperCase())} 
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
           <Button variant="contained" onClick={handleSearch}>Search</Button>

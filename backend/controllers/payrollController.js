@@ -119,7 +119,8 @@ exports.getPayslip = async (req, res) => {
             payroll: {
                 payPeriod: `${formatDt(data.pay_period_from)} to ${formatDt(data.pay_period_to)}`,
                 paidDays: Number(data.paid_days).toFixed(2),
-                netPay: Number(data.net_pay).toFixed(2)
+                netPay: Number(data.net_pay).toFixed(2),
+                monthYear: data.pay_period_from ? new Date(data.pay_period_from).toLocaleString('en-US', { month: 'long', year: 'numeric' }) : ''
             },
             earnings: [
                 { label: "Basic Pay", current: Number(data.basic_pay).toFixed(2), ytd: (Number(data.basic_pay)*ytdMulti).toFixed(2) },

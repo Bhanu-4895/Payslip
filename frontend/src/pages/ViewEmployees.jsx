@@ -3,6 +3,7 @@ import { Box, Paper, Typography, Grid, Card, CardContent, CardActions, Button, I
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../config';
 
 export default function ViewEmployees() {
   const [employees, setEmployees] = useState([]);
@@ -10,7 +11,7 @@ export default function ViewEmployees() {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/employees');
+      const response = await axios.get(`${API_URL}/employees`);
       setEmployees(response.data);
     } catch (error) {
       console.error('Failed to fetch employees', error);
@@ -24,7 +25,7 @@ export default function ViewEmployees() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this employee? This will also delete their payroll records.")) {
       try {
-        await axios.delete(`http://localhost:3001/employees/${id}`);
+        await axios.delete(`${API_URL}/employees/${id}`);
         setEmployees(employees.filter(emp => emp.id !== id));
       } catch (error) {
         console.error('Failed to delete employee', error);

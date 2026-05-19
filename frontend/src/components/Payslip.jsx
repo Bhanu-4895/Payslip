@@ -51,6 +51,9 @@ export default function Payslip({ data }) {
           fontFamily: 'Arial, Helvetica, sans-serif' 
         }}>
           <Header />
+          <Typography align="center" sx={{ fontWeight: 'bold', textTransform: 'uppercase', mb: 2, fontSize: '13px' }}>
+            Payslip for the month of {payroll.monthYear}
+          </Typography>
           <EmployeeDetails employee={employee} payroll={payroll} />
 
           <Box sx={{ mt: 1.5 }}>
@@ -85,8 +88,11 @@ export default function Payslip({ data }) {
 
           {/* Formula Section */}
           <Box sx={{ mt: 2, py: 1, borderTop: '1px solid #000', borderBottom: '1px solid #000', textAlign: 'center' }}>
-            <Typography sx={{ fontWeight: 'bold', fontSize: '11px', letterSpacing: 'normal', fontFamily: 'Arial, sans-serif' }}>
+            <Typography sx={{ fontWeight: 'bold', fontSize: '11px', letterSpacing: 'normal', fontFamily: 'Arial, sans-serif', mb: 0.5 }}>
               NET PAY = TOTAL EARNINGS - TOTAL TAXES - TOTAL DEDUCTIONS
+            </Typography>
+            <Typography sx={{ fontWeight: 'bold', fontSize: '12px', letterSpacing: 'normal', fontFamily: 'Arial, sans-serif' }}>
+              {payroll.netPay} = {totals.earnings} - {totals.tax} - {totals.deductions}
             </Typography>
           </Box>
 
