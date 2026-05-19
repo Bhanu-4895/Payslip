@@ -123,7 +123,7 @@ exports.getPayslip = async (req, res) => {
                 monthYear: data.pay_period_from ? new Date(data.pay_period_from).toLocaleString('en-US', { month: 'long', year: 'numeric' }) : ''
             },
             earnings: [
-                { label: "Basic Pay", current: Number(data.basic_pay).toFixed(2), ytd: (Number(data.basic_pay)*ytdMulti).toFixed(2) },
+                { label: "Gross Pay", current: Number(data.basic_pay).toFixed(2), ytd: (Number(data.basic_pay)*ytdMulti).toFixed(2) },
                 { label: "HRA", current: Number(data.hra).toFixed(2), ytd: (Number(data.hra)*ytdMulti).toFixed(2) },
                 { label: "Transport Allowance", current: Number(data.transport).toFixed(2), ytd: (Number(data.transport)*ytdMulti).toFixed(2) },
                 { label: "Meal Coupon", current: Number(data.meal).toFixed(2), ytd: (Number(data.meal)*ytdMulti).toFixed(2) },

@@ -221,16 +221,21 @@ export default function AddEmployee() {
               <TextField fullWidth label="Paid Days" name="paidDays" type="number" inputProps={{ step: "0.01" }} required value={formData.paidDays} onChange={handleChange} onBlur={handleFormatDecimal} />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <TextField 
                 fullWidth label="PF No" name="pfNo" required value={formData.pfNo} onChange={handleChange} 
                 error={isInvalid(formData.pfNo, "^[A-Za-z0-9\\W_]+$")}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={4}>
               <TextField 
                 fullWidth label="UAN" name="uan" required value={formData.uan} onChange={handleChange} 
                 error={isInvalid(formData.uan, "^[A-Za-z0-9]+$")}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField 
+                fullWidth label="Basic Pay" name="grossBasicPay" type="number" inputProps={{ step: "0.01" }} required value={formData.grossBasicPay} onChange={handleChange} onBlur={handleFormatDecimal} 
               />
             </Grid>
           </Grid>
@@ -239,16 +244,11 @@ export default function AddEmployee() {
           <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>EARNINGS</Typography>
           <Grid container spacing={4} sx={{ mb: 3 }}>
             <Grid item xs={6}>
-              <TextField fullWidth label="Gross Basic Pay (Monthly)" name="grossBasicPay" type="number" inputProps={{ step: "0.01" }} required value={formData.grossBasicPay} onChange={handleChange} onBlur={handleFormatDecimal} />
+              <TextField fullWidth label="Gross Pay" name="basicPay" type="number" value={formData.basicPay} disabled />
             </Grid>
             <Grid item xs={6}>
-              <TextField fullWidth label="Gross Basic Pay (YTD)" value={(gbp * 12).toFixed(2)} disabled />
+              <TextField fullWidth label="Gross Pay (YTD)" value={(bp * 12).toFixed(2)} disabled />
             </Grid>
-
-            <Grid item xs={6}>
-              <TextField fullWidth label="Earned Basic Pay (Prorated)" name="basicPay" type="number" value={formData.basicPay} disabled />
-            </Grid>
-            <Grid item xs={6}></Grid>
 
             <Grid item xs={6}>
               <TextField fullWidth label="H.R.A. (Auto Calculated)" name="hra" type="number" value={formData.hra} disabled />
