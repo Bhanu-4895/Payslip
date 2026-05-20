@@ -5,6 +5,7 @@ import AddEmployee from './pages/AddEmployee';
 import SearchPayslip from './pages/SearchPayslip';
 import ViewEmployees from './pages/ViewEmployees';
 import EditEmployee from './pages/EditEmployee';
+import QuickGenerate from './pages/QuickGenerate';
 import logo from './assets/logo.jpeg';
 
 const theme = createTheme({
@@ -73,6 +74,7 @@ function App() {
               <Button color="inherit" component={Link} to="/" sx={{ border: '1px solid rgba(255,255,255,0.2)' }}>Search & Generate</Button>
               <Button color="inherit" component={Link} to="/employees" sx={{ border: '1px solid rgba(255,255,255,0.2)' }}>Employee Directory</Button>
               <Button color="inherit" component={Link} to="/add" sx={{ border: '1px solid rgba(255,255,255,0.2)' }}>Add Employee</Button>
+              <Button color="inherit" component={Link} to="/quick" sx={{ border: '1px solid rgba(255,255,255,0.2)' }}>Quick Generator</Button>
             </Box>
           </Toolbar>
         </AppBar>
@@ -83,6 +85,7 @@ function App() {
             <Route path="/add" element={<AddEmployee />} />
             <Route path="/employees" element={<ViewEmployees />} />
             <Route path="/edit/:id" element={<EditEmployee />} />
+            <Route path="/quick" element={<QuickGenerate />} />
           </Routes>
         </Box>
       </BrowserRouter>
